@@ -94,10 +94,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cd5072492b5254498b73991805313fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quenchTime: 0.2
+  quenchTime: 12
   shakeRange: 0.05
   smoke: {fileID: 7594173279977620635}
   spriteTransform: {fileID: 555726916952135017}
+  minScalePercent: 0.3
 --- !u!1 &5635127102903436720
 GameObject:
   m_ObjectHideFlags: 0
