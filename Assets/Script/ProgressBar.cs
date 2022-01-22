@@ -4,26 +4,49 @@ using UnityEngine;
 
 public class ProgressBar : MonoBehaviour
 {
-    public float value = 0;
-    public float maxScale;
-    public Transform continousBar;
+    [Range(0,100)] public float value = 0;
+    public RectTransform continousBar;
+    public Vector2 minMaxWidth;
     public Transform[] discreteBar;
     public ProgressBarKind barKind;
-    void Start()
+
+    private Animator animator;
+
+
+    private void Awake()
     {
-        if (barKind == ProgressBarKind.continuous)
-            continousBar.gameObject.SetActive(true);
+        animator = GetComponent<Animator>();
     }
+
     void Update()
     {
+        value = Mathf.Clamp(value, 0, 100);
+
         if (barKind == ProgressBarKind.continuous)
-            continousBar.localScale = new Vector3(continousBar.localScale.x, value / 100 * maxScale, 1);
+        {
+            continousBar.gameObject.SetActive(true);
+            foreach(var bar in discreteBar)
+            {
+                bar.gameObject.SetActive(false);
+            }
+
+            Vector2 size = continousBar.sizeDelta;
+            size.x = minMaxWidth.x + (minMaxWidth.y - minMaxWidth.x) * value / 100;
+            continousBar.sizeDelta = size;
+        }
         else
         {
+            continousBar.gameObject.SetActive(false);
             for (var i = 0; i < 3; i++)
             {
                 if (i < (int)value / 33)
-                    discreteBar[i].gameObject.SetActive(true);
+                {
+                    if (!discreteBar[i].gameObject.activeSelf)
+                    {
+                        discreteBar[i].gameObject.SetActive(true);
+                        if (animator) animator.SetTrigger("Add");
+                    }
+                }
                 else
                     discreteBar[i].gameObject.SetActive(false);
             }
