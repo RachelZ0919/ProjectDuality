@@ -9,7 +9,7 @@ public class Fire : MonoBehaviour
     [SerializeField] private ParticleSystem smoke;
     [SerializeField] private Transform spriteTransform;
     [SerializeField] private float minScalePercent = 0.3f;
-    
+
 
     private float value;
     private Vector3 originalPosition;
@@ -26,7 +26,7 @@ public class Fire : MonoBehaviour
         float originalScale = spriteTransform.localScale.x;
         minScale = originalScale * minScalePercent;
         scaleRange = originalScale - minScale;
-        
+
         spriteTransform.GetComponent<Animator>().Play("Fire", -1, Random.Range(0, 1f));
     }
 
@@ -38,7 +38,7 @@ public class Fire : MonoBehaviour
     /// <summary>
     /// 灭火
     /// </summary>
-    public void Quench()
+    public void Quench(bool skill)
     {
         float shake = Random.Range(-shakeRange, shakeRange);
         Vector3 pos = originalPosition;
@@ -46,7 +46,7 @@ public class Fire : MonoBehaviour
         spriteTransform.localPosition = pos;
         getHit = true;
 
-        value -= Time.deltaTime;
+        value -= Time.deltaTime * (skill ? 10 : 1);
         spriteTransform.localScale = new Vector3(value / quenchTime * scaleRange + minScale, value / quenchTime * scaleRange + minScale, 1);
         if (value < 0)//火完全被灭时
         {
@@ -57,11 +57,11 @@ public class Fire : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(!lastGetHit && getHit)
+        if (!lastGetHit && getHit)
         {
             if (smoke) smoke.Play();
         }
-        else if(lastGetHit && !getHit)
+        else if (lastGetHit && !getHit)
         {
             if (smoke) smoke.Stop();
         }

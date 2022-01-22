@@ -309,13 +309,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   value: 0
-  maxScale: 40
   continousBar: {fileID: 5311447727168984486}
+  minMaxWidth: {x: 0, y: 0}
   discreteBar:
   - {fileID: 5311447727763750984}
   - {fileID: 5311447728739053162}
   - {fileID: 5311447728765634887}
-  barKind: 0
+  barKind: 1
 --- !u!1 &5311447728733252379
 GameObject:
   m_ObjectHideFlags: 0
