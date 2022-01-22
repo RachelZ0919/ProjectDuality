@@ -15,7 +15,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - GenerateRange
   - 
   - 
   - 
@@ -42,4 +42,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Object
+    uniqueID: 3147963873
+    locked: 0
+  - name: Elephant
+    uniqueID: 3415627179
+    locked: 0
+  - name: Fire
+    uniqueID: 3720249997
+    locked: 0
+  - name: Water
+    uniqueID: 1761861461
     locked: 0

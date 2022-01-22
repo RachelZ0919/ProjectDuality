@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class Elephant : MonoBehaviour
 {
-    public Transform startTr;//鼻根
-    public Transform endTr;//鼻子末梢
     public Transform Nose;//鼻子
     public float maxDis;//最大鼻子长度
     public GameObject progressBar;//进度条
     public float skillTime;//技能蓄力时间
     public Transform Beam;//水柱
     public Transform Beam2;//水柱
+    public Transform hitEffect;
     public float beamOffset;
     public Vector2 MaxAndMinWidth;//水柱宽度范围
+
+    public Transform startPhysic;
+    public Transform endPhysic;
 
 
     private Vector3 fountainPos;//喷泉位置
@@ -33,12 +35,12 @@ public class Elephant : MonoBehaviour
     {
         NoseMove();
         FireTrigger();
-        Beam.position = endTr.position;
-        Beam.rotation = Quaternion.Euler(0, 0, Nose.eulerAngles.z - 90);
+        Beam.position = endPhysic.position;
+        Beam.rotation = Quaternion.Euler(0, 0, endPhysic.eulerAngles.z);
     }
     void NoseMove()
     {
-        if (Input.GetMouseButton(0) && fountain && (fountainPos - startTr.position).magnitude < maxDis)//点击喷泉
+        if (Input.GetMouseButton(0) && fountain && (fountainPos - startPhysic.position).magnitude < maxDis)//点击喷泉
         {
             skillValue += Time.deltaTime;
             mousePos = fountainPos;
@@ -70,29 +72,39 @@ public class Elephant : MonoBehaviour
         }
 
         // transform.LookAt(mousePos, Vector3.up);
-        Dir = mousePos - startTr.position;
-        Nose.rotation = Quaternion.Euler(0, 0, -Mathf.Atan2(Dir.x, Dir.y) * Mathf.Rad2Deg);
-        // Debug.DrawLine(mousePos, startTr.position, Color.green, 2.5f);
-        if (Dir.magnitude < maxDis)
-            Nose.localScale = new Vector3(1, Dir.magnitude, 1);
-        else
-            Nose.localScale = new Vector3(1, maxDis, 1);
+        Dir = mousePos - startPhysic.position;
+        float dist = Dir.magnitude;
+        dist = Mathf.Clamp(dist, -maxDis, maxDis);
+        Vector3 endPoint = startPhysic.position + dist * Dir.normalized;
+        endPhysic.GetComponent<Rigidbody2D>().MovePosition(endPoint);
+
+        //Nose.localRotation = Quaternion.Euler(0, 0, -Mathf.Atan2(Dir.y, Dir.x) * Mathf.Rad2Deg);
+        //// Debug.DrawLine(mousePos, startTr.position, Color.green, 2.5f);
+        //if (Dir.magnitude < maxDis)
+        //    Nose.localScale = new Vector3(Dir.magnitude, 1, 1);
+        //else
+        //    Nose.localScale = new Vector3(maxDis, 1, 1);
+
+
     }
     void FireTrigger()
     {
-        RaycastHit2D hit = Physics2D.Raycast(startTr.position, Dir);
+        bool hitFire = false;
+        RaycastHit2D hit = Physics2D.Raycast(startPhysic.position, Dir, Mathf.Infinity, LayerMask.GetMask("Default"));
         if (hit.collider != null)
         {
             GameObject gameObj = hit.collider.gameObject;
-            Debug.DrawLine(startTr.position, hit.point, Color.green, 2.5f);
+            Debug.DrawLine(startPhysic.position, hit.point, Color.green, 2.5f);
             Debug.Log(gameObj.name);
             if (gameObj.CompareTag("fire"))
             {
-                gameObj.GetComponent<Fire>().Quench(skill);
-                Vector2 size = new Vector2((new Vector3(hit.point.x, hit.point.y, 0) - endTr.position).magnitude * beamOffset,
+                gameObj.GetComponent<Fire>().Quench(skill, -hit.normal);
+                Vector2 size = new Vector2((new Vector3(hit.point.x, hit.point.y, 0) - endPhysic.position).magnitude * beamOffset,
                      skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
                 Beam.GetComponent<SpriteRenderer>().size = size;
                 Beam2.GetComponent<SpriteRenderer>().size = size;
+                hitFire = true;
+                hitEffect.position = hit.point;
             }
             else if (gameObj.CompareTag("fountain"))
             {
@@ -106,5 +118,7 @@ public class Elephant : MonoBehaviour
             Beam2.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
             Beam.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
         }
+
+        hitEffect.gameObject.SetActive(hitFire);
     }
 }
