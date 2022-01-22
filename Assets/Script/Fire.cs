@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireObject : MonoBehaviour
+public class Fire : MonoBehaviour
 {
-    public float quenchTime;
-    public ProgressBar myProgressBar;
-
+    public float quenchTime;//熄灭所用时间
     private float value;
 
 
@@ -14,11 +12,17 @@ public class FireObject : MonoBehaviour
     {
         value = quenchTime;
     }
+
+    /// <summary>
+    /// 灭火
+    /// </summary>
     public void Quench()
     {
         value -= Time.deltaTime;
-        myProgressBar.value = (1 - value / quenchTime) * 100;
-        if (value < 0)
+        if (value < 0)//火完全被灭时
+        {
             Debug.Log("successed");
+            Destroy(gameObject);
+        }
     }
 }

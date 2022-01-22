@@ -29,6 +29,7 @@ public class Elephant : MonoBehaviour
     }
     void FireTrigger()
     {
+
         RaycastHit2D hit = Physics2D.Raycast(startTr.position, Dir);
         if (hit.collider != null)
         {
@@ -37,7 +38,7 @@ public class Elephant : MonoBehaviour
             Debug.Log(gameObj.name);
             if (gameObj.CompareTag("fire"))
             {
-                gameObj.GetComponent<FireObject>().Quench();
+                gameObj.GetComponent<Fire>().Quench();
             }
         }
     }
