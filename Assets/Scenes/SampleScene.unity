@@ -1556,6 +1556,12 @@ MonoBehaviour:
   MaxAndMinWidth: {x: 0.61, y: 2.3}
   startPhysic: {fileID: 1233797658}
   endPhysic: {fileID: 1825999764}
+  elephantSprite:
+  - {fileID: 21300000, guid: 26a33c29ab06fe844aefe5c4dfd95ad1, type: 3}
+  - {fileID: 21300000, guid: db7e72e117033da48a586dbb2a8c1f29, type: 3}
+  - {fileID: 21300000, guid: d2094d72964417149a5a36b621033f76, type: 3}
+  - {fileID: 21300000, guid: bc86540d1efe9494199a9c2cb5daa6a8, type: 3}
+  eleRenderer: {fileID: 454587955}
 --- !u!1001 &1287956305
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1643,7 +1649,7 @@ PrefabInstance:
     - target: {fileID: 2051328387956714722, guid: 889e49ff702f19a408864d0407bd03ea,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 122.94742
+      value: 120.855804
       objectReference: {fileID: 0}
     - target: {fileID: 6137495315961603089, guid: 889e49ff702f19a408864d0407bd03ea,
         type: 3}
