@@ -16,7 +16,8 @@ public class Elephant : MonoBehaviour
 
     public Transform startPhysic;
     public Transform endPhysic;
-
+    public Sprite[] elephantSprite;
+    public SpriteRenderer eleRenderer;
 
     private Vector3 fountainPos;//喷泉位置
     private Vector3 mousePos;//鼠标位置
@@ -71,12 +72,17 @@ public class Elephant : MonoBehaviour
                 skill = false;
         }
 
+
+
+        eleRenderer.sprite = elephantSprite[(int)((skillValue / skillTime) * 3)];
+
         // transform.LookAt(mousePos, Vector3.up);
         Dir = mousePos - startPhysic.position;
         float dist = Dir.magnitude;
         dist = Mathf.Clamp(dist, -maxDis, maxDis);
         Vector3 endPoint = startPhysic.position + dist * Dir.normalized;
         endPhysic.GetComponent<Rigidbody2D>().MovePosition(endPoint);
+        // endPhysic.position = endPoint;
 
         //Nose.localRotation = Quaternion.Euler(0, 0, -Mathf.Atan2(Dir.y, Dir.x) * Mathf.Rad2Deg);
         //// Debug.DrawLine(mousePos, startTr.position, Color.green, 2.5f);
@@ -95,7 +101,6 @@ public class Elephant : MonoBehaviour
         {
             GameObject gameObj = hit.collider.gameObject;
             Debug.DrawLine(startPhysic.position, hit.point, Color.green, 2.5f);
-            Debug.Log(gameObj.name);
             if (gameObj.CompareTag("fire"))
             {
                 gameObj.GetComponent<Fire>().Quench(skill, -hit.normal);
@@ -106,19 +111,25 @@ public class Elephant : MonoBehaviour
                 hitFire = true;
                 hitEffect.position = hit.point;
             }
-            else if (gameObj.CompareTag("fountain"))
-            {
-                fountain = true;
-                fountainPos = gameObj.transform.position;
-            }
         }
-        else
+
+        hitEffect.gameObject.SetActive(hitFire);
+    }
+    void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.CompareTag("fountain"))
+        {
+            fountain = true;
+            fountainPos = col.transform.position;
+        }
+    }
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.CompareTag("fountain"))
         {
             fountain = false;
             Beam2.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
             Beam.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
         }
-
-        hitEffect.gameObject.SetActive(hitFire);
     }
 }
