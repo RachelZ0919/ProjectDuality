@@ -20,6 +20,10 @@ public class FireObject : MonoBehaviour
     public GameObject scoreObject;
     public Vector2 scoreRange;
 
+
+    public GameObject bling;
+    public Transform spriteTransform;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -50,6 +54,10 @@ public class FireObject : MonoBehaviour
         //}
     }
 
+    public void CreateBling()
+    {
+        Instantiate(bling, spriteTransform.position, transform.rotation, transform.parent).SetActive(true);
+    }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
@@ -65,6 +73,7 @@ public class FireObject : MonoBehaviour
             score.MyScore = Mathf.RoundToInt(Random.Range(scoreRange.x, scoreRange.y));
             score.gameObject.SetActive(true);
             flied = true;
+
         }
 
         if (startToFly)

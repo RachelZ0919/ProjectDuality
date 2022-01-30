@@ -23,6 +23,7 @@ public class Fire : MonoBehaviour
     private bool lastGetHit = false;
 
     private Vector2 vel;
+    private Vector2 velDir;
     private bool dead = false;
 
     private Material mat;
@@ -53,7 +54,7 @@ public class Fire : MonoBehaviour
             pos += vel * Time.deltaTime;
             vel = vel.normalized * (vel.magnitude * (1 - dieDrag * vel.magnitude * Time.deltaTime));
             transform.position = pos;
-            if(vel.magnitude < 1f)
+            if (vel.magnitude < 1f || Vector2.Dot(vel, velDir) < 0)
             {
                 Destroy(gameObject);
             }
@@ -74,14 +75,18 @@ public class Fire : MonoBehaviour
         getHit = true;
 
 
-        value -= Time.deltaTime * (skill ? 10 : 1);
+        value -= Time.deltaTime;
+        if (skill) value = 0;
         transform.localScale = new Vector3(value / quenchTime * scaleRange + minScale, value / quenchTime * scaleRange + minScale, 1) * .3f / transform.parent.localScale.x;
-        if (value < 0)//火完全被灭时
+        if (value <= 0)//火完全被灭时
         {
+            velDir = dir.normalized;
             vel = dir.normalized * dieSpeed;
+            Debug.Log($"[Fire] vel = {vel}");
             dead = true;
-            fireObject.fireOn.Remove(gameObject);
+            if(fireObject && fireObject.fireOn != null) fireObject.fireOn.Remove(gameObject);
             GetComponent<BoxCollider2D>().enabled = false;
+            GetComponent<AudioSource>().Play();
         }
     }
 

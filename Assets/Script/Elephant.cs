@@ -26,45 +26,95 @@ public class Elephant : MonoBehaviour
     private bool skill;//技能
     private float skillValue;//技能蓄力值
     private ProgressBar PB;
+    private bool skillStart = true;
 
+
+    public GameObject skillCircle;
+    public Transform skillSprite;
+    public Animator elephantAnim;
+
+    private Animator fountainAnim;
+    private bool animPlayed = false;
+
+    private AudioSource source;
 
     void Awake()
     {
         PB = progressBar.GetComponent<ProgressBar>();
+        source = GetComponent<AudioSource>();
     }
     void Update()
     {
         NoseMove();
-        FireTrigger();
+        if(!skill) FireTrigger();
         Beam.position = endPhysic.position;
         Beam.rotation = Quaternion.Euler(0, 0, endPhysic.eulerAngles.z);
+        skillSprite.position = endPhysic.position;
+        skillSprite.rotation = Quaternion.Euler(0, 0,endPhysic.eulerAngles.z);
     }
     void NoseMove()
     {
+        float speedRate = 1;
+        bool beamActive = true;
+        float animSpeed = 1;
+
         if (Input.GetMouseButton(0) && fountain && (fountainPos - startPhysic.position).magnitude < maxDis)//点击喷泉
         {
             skillValue += Time.deltaTime;
+            skillValue = Mathf.Clamp(skillValue, 0, skillTime);
+            
             mousePos = fountainPos;
-            if (skillValue / skillTime > 1)
+            if (skillValue / skillTime > .33f)
+            {
                 skill = true;
+                animPlayed = false;
+            }
+
 
             progressBar.SetActive(true);
             PB.barKind = ProgressBarKind.discrete;
             PB.value = skillValue / skillTime * 100;
+            speedRate = 0;
+
+            beamActive = false;
+            skillSprite.gameObject.SetActive(false);
+            skillCircle.SetActive(false);
+
+            animSpeed = 0;
         }
         else
         {
+            mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePos = new Vector3(mousePos.x, mousePos.y, 0);
+
             if (skill)
             {
                 progressBar.SetActive(true);
                 PB.barKind = ProgressBarKind.continuous;
                 PB.value = skillValue / skillTime * 100;
+                speedRate = 10;
+                skillCircle.SetActive(true);
+                skillSprite.gameObject.SetActive(true);
+                beamActive = false;
+                mousePos = startPhysic.position + new Vector3(.3f, .2f, 0);
+                animSpeed = 3;
+
+                if (!animPlayed)
+                {
+                    fountainAnim.SetBool("Used", true);
+                    animPlayed = true;
+                    source.Play();
+                }
             }
             else
+            {
                 progressBar.SetActive(false);
+                skillCircle.SetActive(false);
+                skillSprite.gameObject.SetActive(false);
+            }
 
-            mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePos = new Vector3(mousePos.x, mousePos.y, 0);
+
+
 
             if (skillValue > 0)
                 skillValue -= Time.deltaTime;
@@ -72,25 +122,18 @@ public class Elephant : MonoBehaviour
                 skill = false;
         }
 
-
+        Planet.SpeedRate = speedRate;
+        Beam.gameObject.SetActive(beamActive);
+        elephantAnim.speed = animSpeed;
+        
 
         eleRenderer.sprite = elephantSprite[(int)((skillValue / skillTime) * 3)];
 
-        // transform.LookAt(mousePos, Vector3.up);
         Dir = mousePos - startPhysic.position;
         float dist = Dir.magnitude;
         dist = Mathf.Clamp(dist, -maxDis, maxDis);
         Vector3 endPoint = startPhysic.position + dist * Dir.normalized;
         endPhysic.GetComponent<Rigidbody2D>().MovePosition(endPoint);
-        // endPhysic.position = endPoint;
-
-        //Nose.localRotation = Quaternion.Euler(0, 0, -Mathf.Atan2(Dir.y, Dir.x) * Mathf.Rad2Deg);
-        //// Debug.DrawLine(mousePos, startTr.position, Color.green, 2.5f);
-        //if (Dir.magnitude < maxDis)
-        //    Nose.localScale = new Vector3(Dir.magnitude, 1, 1);
-        //else
-        //    Nose.localScale = new Vector3(maxDis, 1, 1);
-
 
     }
     void FireTrigger()
@@ -113,6 +156,12 @@ public class Elephant : MonoBehaviour
             }
         }
 
+        if (!hitFire)
+        {
+            Beam.GetComponent<SpriteRenderer>().size = new Vector2(27f, MaxAndMinWidth.x);
+            Beam2.GetComponent<SpriteRenderer>().size = new Vector2(27f, MaxAndMinWidth.x);
+        }
+
         hitEffect.gameObject.SetActive(hitFire);
     }
     void OnTriggerStay2D(Collider2D col)
@@ -121,6 +170,8 @@ public class Elephant : MonoBehaviour
         {
             fountain = true;
             fountainPos = col.transform.position;
+            fountainAnim = col.GetComponent<Animator>();
+            fountainAnim.SetBool("InRange", true);
         }
     }
     void OnTriggerExit2D(Collider2D col)
@@ -128,8 +179,11 @@ public class Elephant : MonoBehaviour
         if (col.CompareTag("fountain"))
         {
             fountain = false;
-            Beam2.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
-            Beam.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
+            fountainAnim.SetBool("InRange", false);
+            fountainAnim = null;
+            col.GetComponent<Fountain>().DestroyFountain();
+            //Beam2.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
+            //Beam.GetComponent<SpriteRenderer>().size = new Vector2(27f, skill ? MaxAndMinWidth.y : MaxAndMinWidth.x);
         }
     }
 }

@@ -8,6 +8,8 @@ public class Planet : MonoBehaviour
     public GameObject[] fireObjectPrefab;//着火物体预制体
     public float cInterVal;//创造物体的间隔
 
+    static public float SpeedRate { get; set; }
+
     private int index = 0;
     private float timeVal;//计时器
     [HideInInspector] public int createTime;//创造物体的次数
@@ -15,12 +17,13 @@ public class Planet : MonoBehaviour
     private void Awake()
     {
         index = Random.Range(0, fireObjectPrefab.Length);
+        SpeedRate = 1;
     }
 
     void Update()
     {
-        transform.Rotate(Vector3.forward, speed * Time.deltaTime);
-        timeVal += Time.deltaTime;
+        transform.Rotate(Vector3.forward, SpeedRate * speed * Time.deltaTime);
+        timeVal += Time.deltaTime * SpeedRate;
         if (timeVal > cInterVal)
         {
             CreateFireObject();
@@ -44,8 +47,5 @@ public class Planet : MonoBehaviour
         index = randomIndex;
 
         FO.gameObject.SetActive(true);
-
-        //FO.position = new Vector3(Random.Range(CreateRangeStart.position.x, CreateRangeEnd.position.x),
-        //    Random.Range(CreateRangeStart.position.y, CreateRangeEnd.position.y));
     }
 }

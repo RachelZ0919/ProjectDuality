@@ -54,6 +54,8 @@ MonoBehaviour:
   fireGenerateRange:
   - {fileID: 3255846489444802721}
   - {fileID: 3255846489444802721}
+  scoreObject: {fileID: 0}
+  scoreRange: {x: 0, y: 0}
 --- !u!95 &1938817767348019852
 Animator:
   serializedVersion: 3
@@ -140,9 +142,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -1147003423
+  m_SortingLayer: 1
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 22df1849b9a17ca4b9650c06b9f214f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -520,8 +522,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1147003423
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ad0f6b1484621c94595e1d5613fba1d6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
